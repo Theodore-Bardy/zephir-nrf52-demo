@@ -27,7 +27,7 @@ LOG_MODULE_REGISTER(main);
 /**
  * @brief Synchronization variables
  */
-static struct k_sem btn1_press_sem;
+static struct k_sem btn3_press_sem;
 
 /**
  * @brief Thread macro and variables
@@ -81,8 +81,8 @@ void btn2_pressed(const struct device* port, struct gpio_callback* cb, gpio_port
 
 void btn3_pressed(const struct device* port, struct gpio_callback* cb, gpio_port_pins_t pins)
 {
-    // Give semaphore when the btn1 is pressed
-    k_sem_give(&btn1_press_sem);
+    // Give semaphore when the btn3 is pressed
+    k_sem_give(&btn3_press_sem);
 }
 
 int main(void)
@@ -130,7 +130,7 @@ int main(void)
     }
 
     // Initialize synchronization variables
-    k_sem_init(&btn1_press_sem, 0u, 1u);
+    k_sem_init(&btn3_press_sem, 0u, 1u);
 
     // Initialize callbacks
     gpio_init_callback(&btn0_cb_data, btn0_pressed, BIT(btn0.pin));
@@ -192,7 +192,7 @@ prvLedThread(void* arg0, void* arg1, void* arg2)
 
     while (1) {
         gpio_pin_toggle_dt(&led0);
-      gpio_pin_toggle_dt(&led1);
+        gpio_pin_toggle_dt(&led1);
 
         led_state = !led_state;
         LOG_DBG("LED 0 state: %s", led_state ? "ON" : "OFF");
@@ -213,7 +213,7 @@ prvStatThread(void* arg0, void* arg1, void* arg2)
 
     while (1)
     {
-        k_sem_take(&btn1_press_sem, K_FOREVER);
+        k_sem_take(&btn3_press_sem, K_FOREVER);
         k_thread_runtime_stats_get(led_thread_id, &stats_thread);
         LOG_INF("Cycles of led thread: %ld", (long)stats_thread.execution_cycles);
     }
