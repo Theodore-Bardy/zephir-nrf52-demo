@@ -9,6 +9,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include "ble.h"
 #include "mpu6050.h"
 
 LOG_MODULE_REGISTER(main);
@@ -99,9 +100,9 @@ int main(void) {
   // Initialize hardware
   uint8_t ret;
 
-  if (!mpu6050_init()) {
-    return 0;
-  }
+  // if (!mpu6050_init()) {
+  //   return 0;
+  // }
   if (!gpio_is_ready_dt(&led0) || !gpio_is_ready_dt(&led1) ||
       !gpio_is_ready_dt(&led2) || !gpio_is_ready_dt(&led3) ||
       !gpio_is_ready_dt(&btn0) || !gpio_is_ready_dt(&btn1) ||
@@ -166,15 +167,18 @@ int main(void) {
                                   prvLedThread, NULL, NULL, NULL,
                                   LED_THREAD_PRIORITY, K_ESSENTIAL, K_NO_WAIT);
 
-  mpu_thread_id = k_thread_create(&stat_thread_cxt, stat_thread_area,
-                                  K_THREAD_STACK_SIZEOF(stat_thread_area),
-                                  prvStatThread, NULL, NULL, NULL,
-                                  STAT_THREAD_PRIORITY, K_ESSENTIAL, K_NO_WAIT);
+  // stat_thread_id = k_thread_create(
+  //     &stat_thread_cxt, stat_thread_area,
+  //     K_THREAD_STACK_SIZEOF(stat_thread_area), prvStatThread, NULL, NULL,
+  //     NULL, STAT_THREAD_PRIORITY, K_ESSENTIAL, K_NO_WAIT);
 
-  stat_thread_id = k_thread_create(&mpu_thread_cxt, mpu_thread_area,
-                                   K_THREAD_STACK_SIZEOF(mpu_thread_area),
-                                   prvMpuThread, NULL, NULL, NULL,
-                                   MPU_THREAD_PRIORITY, K_ESSENTIAL, K_NO_WAIT);
+  // mpu_thread_id = k_thread_create(&mpu_thread_cxt, mpu_thread_area,
+  //                                  K_THREAD_STACK_SIZEOF(mpu_thread_area),
+  //                                  prvMpuThread, NULL, NULL, NULL,
+  //                                  MPU_THREAD_PRIORITY, K_ESSENTIAL,
+  //                                  K_NO_WAIT);
+
+  ble_agent_init();
 
   LOG_INF("--- Application is starting ---");
 
