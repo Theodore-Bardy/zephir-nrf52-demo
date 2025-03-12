@@ -11,6 +11,7 @@
 #include "board_def.h"
 #include "demo_task1.h"
 #include "demo_task2.h"
+#include "mpu6050.h"
 
 LOG_MODULE_REGISTER(main);
 
@@ -66,6 +67,11 @@ int main(void) {
     return 0;
   }
 
+  if (!mpu6050_sensor_init()) {
+    LOG_ERR("Failed to initialize MPU-6050 sensor");
+    return 0;
+  }
+
   // Start tasks
   task1_init();
   task2_init();
@@ -73,7 +79,8 @@ int main(void) {
   LOG_INF("--- Application is starting ---");
 
   while (1) {
-    k_sleep(K_FOREVER);
+    k_sleep(K_SECONDS(2));
+    mpu6050_get_data();
   }
 
   return 0;

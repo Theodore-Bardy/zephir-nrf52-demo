@@ -6,5 +6,6 @@
                 reg = <0x68>;
                 status = "okay";
                 label = "mpu6050";
+                int-gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
         };
 };

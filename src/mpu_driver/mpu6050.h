@@ -8,14 +8,9 @@
 #define _MPU6050_H_
 
 #include <stdbool.h>
-#include <stdint.h>
 
-bool mpu6050_init(void);
+bool mpu6050_sensor_init(void);
 
-void mpu6050_read_acce(int16_t *x, int16_t *y, int16_t *z);
-
-void mpu6050_read_gyro(int16_t *x, int16_t *y, int16_t *z);
-
-void mpu6050_read_temp(int16_t *t);
+void mpu6050_get_data(void);
 
 #endif // _MPU6050_H_

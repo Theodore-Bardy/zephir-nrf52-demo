@@ -59,7 +59,7 @@ static void prvTask1(void *a, void *b, void *c) {
     prvSimulateWork();
     gpio_pin_toggle_dt(&led0);
 
-    k_sleep(K_MSEC(500));
+    k_sleep(K_SECONDS(5));
   }
 }
 
