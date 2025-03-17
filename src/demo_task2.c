@@ -26,21 +26,12 @@ static uint64_t amount_of_work = 30000;
 
 // Interrupt structures and callbacks
 static struct gpio_callback btn2_cb_data;
-static struct gpio_callback btn3_cb_data;
 
 void prvBtn2Pressed(const struct device *port, struct gpio_callback *cb,
                     gpio_port_pins_t pins) {
   if (amount_of_work < 100000u) {
     amount_of_work += 5000;
     LOG_INF("Increase amount of work %lld", amount_of_work);
-  }
-}
-
-void prvBtn3Pressed(const struct device *port, struct gpio_callback *cb,
-                    gpio_port_pins_t pins) {
-  if (amount_of_work > 10000u) {
-    amount_of_work -= 5000;
-    LOG_INF("Decrease amount of work %lld", amount_of_work);
   }
 }
 
@@ -51,6 +42,10 @@ static void prvSimulateWork(void) {
 }
 
 static void prvTask2(void *a, void *b, void *c) {
+  ARG_UNUSED(a);
+  ARG_UNUSED(b);
+  ARG_UNUSED(c);
+
   k_sem_take(&sem_task2_start, K_FOREVER);
   while (true) {
     LOG_INF("Task 2 is running...");
@@ -64,15 +59,10 @@ static void prvTask2(void *a, void *b, void *c) {
 }
 
 bool task2_init(void) {
-  // Initialize buttons callbacks
-  gpio_init_callback(&btn2_cb_data, prvBtn2Pressed, BIT(btn0.pin));
-  gpio_init_callback(&btn3_cb_data, prvBtn3Pressed, BIT(btn1.pin));
-
+  // Initialize button callback
+  gpio_init_callback(&btn2_cb_data, prvBtn2Pressed, BIT(btn2.pin));
   gpio_add_callback_dt(&btn2, &btn2_cb_data);
-  gpio_add_callback_dt(&btn3, &btn3_cb_data);
-
   gpio_pin_interrupt_configure_dt(&btn2, GPIO_INT_EDGE_FALLING);
-  gpio_pin_interrupt_configure_dt(&btn3, GPIO_INT_EDGE_FALLING);
 
   k_sem_give(&sem_task2_start);
   return true;

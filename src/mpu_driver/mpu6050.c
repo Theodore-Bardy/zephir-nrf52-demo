@@ -4,6 +4,7 @@
  * @brief Driver implementation for the MPU-6050 sensor
  */
 
+#include "mpu6050.h"
 #include <stdint.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
@@ -15,9 +16,8 @@ LOG_MODULE_REGISTER(mpu6050);
 
 const struct device *const mpu6050 = DEVICE_DT_GET_ONE(invensense_mpu6050);
 
-static double ax, ay, az, gx, gy, gz, t;
-
-static int prvProcessMpu6050(const struct device *dev) {
+static int prvProcessMpu6050(const struct device *dev,
+                             struct mpu6050_data *data) {
   struct sensor_value temperature;
   struct sensor_value accel[3];
   struct sensor_value gyro[3];
@@ -34,13 +34,13 @@ static int prvProcessMpu6050(const struct device *dev) {
     rc = sensor_channel_get(dev, SENSOR_CHAN_DIE_TEMP, &temperature);
   }
   if (rc == 0) {
-    t = sensor_value_to_double(&temperature);
-    ax = sensor_value_to_double(&accel[0]);
-    ay = sensor_value_to_double(&accel[1]);
-    az = sensor_value_to_double(&accel[2]);
-    gx = sensor_value_to_double(&gyro[0]);
-    gy = sensor_value_to_double(&gyro[1]);
-    gz = sensor_value_to_double(&gyro[2]);
+    data->temp = sensor_value_to_double(&temperature);
+    data->acce[X_INDEX] = sensor_value_to_double(&accel[0]);
+    data->acce[Y_INDEX] = sensor_value_to_double(&accel[1]);
+    data->acce[Z_INDEX] = sensor_value_to_double(&accel[2]);
+    data->gyro[X_INDEX] = sensor_value_to_double(&gyro[0]);
+    data->gyro[Y_INDEX] = sensor_value_to_double(&gyro[1]);
+    data->gyro[Z_INDEX] = sensor_value_to_double(&gyro[2]);
   } else {
     LOG_ERR("sample fetch/get failed: %d", rc);
   }
@@ -85,13 +85,8 @@ bool mpu6050_sensor_init(void) {
   return true;
 }
 
-void mpu6050_get_data(void) {
+void mpu6050_get_data(struct mpu6050_data *const data) {
   if (!IS_ENABLED(CONFIG_MPU6050_TRIGGER)) {
-    prvProcessMpu6050(mpu6050);
+    prvProcessMpu6050(mpu6050, data);
   }
-
-  LOG_INF("\n\r  temp  %lf Cel\n\r"
-          "  accel %lf %lf %lf m/s/s\n\r"
-          "  gyro  %lf %lf %lf rad/s",
-          t, ax, ay, az, gx, gy, gz);
 }

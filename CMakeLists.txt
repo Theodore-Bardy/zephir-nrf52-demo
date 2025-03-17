@@ -15,8 +15,8 @@ find_package(Zephyr REQUIRED)
 project(zephyr_nrf52_demo)
 
 # Add sources
-target_sources(app PRIVATE src/main.c src/demo_task1.c src/demo_task2.c
-                           src/mpu_driver/mpu6050.c)
+file(GLOB SOURCES_APP src/*.c src/mpu_driver/*.c)
+target_sources(app PRIVATE src/main.c ${SOURCES_APP})
 
 # Include headers
 target_include_directories(app PRIVATE src/mpu_driver)

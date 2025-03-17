@@ -8,12 +8,12 @@
 #ifndef _BOARD_DEF_H_
 #define _BOARD_DEF_H_
 
+#include <stdint.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
+#include <zephyr/zbus/zbus.h>
 
-/**
- * @brief Hardware used in the demo
- */
+// Hardware used in the demo
 static const struct gpio_dt_spec led0 =
     GPIO_DT_SPEC_GET(DT_NODELABEL(led0), gpios);
 static const struct gpio_dt_spec led1 =
@@ -30,5 +30,12 @@ static const struct gpio_dt_spec btn2 =
     GPIO_DT_SPEC_GET(DT_NODELABEL(button2), gpios);
 static const struct gpio_dt_spec btn3 =
     GPIO_DT_SPEC_GET(DT_NODELABEL(button3), gpios);
+
+enum TiggerSource {
+  BUTTON_0 = 0,
+  BUTTON_1,
+  BUTTON_2,
+  BUTTON_3,
+};
 
 #endif // _BOARD_DEF_H_

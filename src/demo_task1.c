@@ -51,6 +51,10 @@ static void prvSimulateWork(void) {
 }
 
 static void prvTask1(void *a, void *b, void *c) {
+  ARG_UNUSED(a);
+  ARG_UNUSED(b);
+  ARG_UNUSED(c);
+
   k_sem_take(&sem_task1_start, K_FOREVER);
   while (true) {
     LOG_INF("Task 1 is running...");
