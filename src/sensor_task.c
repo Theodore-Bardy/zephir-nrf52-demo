@@ -9,12 +9,12 @@
 LOG_MODULE_REGISTER(task_sensor);
 
 // ZBus channels definition
-ZBUS_CHAN_DEFINE(sensor_data,          // Name
-                 struct mpu6050_data,  // Message type
-                 NULL,                 // Validator
-                 NULL,                 // User data
-                 ZBUS_OBSERVERS_EMPTY, // Observers
-                 ZBUS_MSG_INIT(0)      // Initial value
+ZBUS_CHAN_DEFINE(sensor_data,                    // Name
+                 struct mpu6050_data,            // Message type
+                 NULL,                           // Validator
+                 NULL,                           // User data
+                 ZBUS_OBSERVERS(extern_com_sub), // Observers
+                 ZBUS_MSG_INIT(0)                // Initial value
 );
 
 ZBUS_CHAN_DEFINE(trigger,                            // Name
@@ -29,7 +29,7 @@ ZBUS_CHAN_DEFINE(trigger,                            // Name
 #define TASK_SENSOR_STACK_SIZE (1024)
 #define TASK_SENSOR_PRIORITY (1)
 static void prvTaskSensor(void *sub);
-ZBUS_SUBSCRIBER_DEFINE(trigger_sub, TASK_SENSOR_PRIORITY);
+ZBUS_SUBSCRIBER_DEFINE(trigger_sub, 1);
 K_THREAD_DEFINE(task_sensor_id, TASK_SENSOR_STACK_SIZE, prvTaskSensor,
                 &trigger_sub, NULL, NULL, TASK_SENSOR_PRIORITY, K_ESSENTIAL, 0);
 
@@ -61,7 +61,6 @@ bool task_sensor_init(void) {
   gpio_pin_interrupt_configure_dt(&btn3, GPIO_INT_EDGE_FALLING);
 
   k_sem_give(&sem_task_sensor_start);
-
   return true;
 }
 
@@ -78,6 +77,7 @@ static void prvTaskSensor(void *sub) {
     if (&trigger != channel) {
       LOG_ERR("Wrong channel triggered: %s (expected: %s)", channel->name,
               trigger.name);
+      continue;
     }
     // Acquire data
     mpu6050_get_data(&data);

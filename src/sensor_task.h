@@ -1,5 +1,3 @@
-
-
 /**
  * @file sensor_task.h
  * @brief Task that manages sensors of the demo

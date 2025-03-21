@@ -8,6 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include "ble_task.h"
 #include "board_def.h"
 #include "demo_task1.h"
 #include "demo_task2.h"
@@ -71,6 +72,9 @@ int main(void) {
   task1_init();
   task2_init();
   task_sensor_init();
+  if (!task_ble_init()) {
+    LOG_ERR("BLE error on init");
+  }
 
   LOG_INF("--- Application is starting ---");
 
