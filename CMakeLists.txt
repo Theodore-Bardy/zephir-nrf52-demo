@@ -15,8 +15,14 @@ find_package(Zephyr REQUIRED)
 project(zephyr_nrf52_demo)
 
 # Add sources
-file(GLOB SOURCES_APP src/demo_task1.c src/demo_task2.c src/sensor_task.c
-     src/mpu_driver/*.c)
+file(
+  GLOB
+  SOURCES_APP
+  src/demo_task1.c
+  src/demo_task2.c
+  src/sensor_task.c
+  src/serialization.c
+  src/mpu_driver/*.c)
 
 # BLE task sources
 if(CONFIG_BLE_SENSOR_DATA)

@@ -1,5 +1,3 @@
-
-
 /**
  * @file board_def.h
  * @brief Definition of the hardware used in the demo

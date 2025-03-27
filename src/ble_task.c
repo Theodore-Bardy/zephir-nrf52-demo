@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdint.h>
 #include <string.h>
 #include <sys/types.h>
@@ -14,6 +15,7 @@
 
 #include "ble_task.h"
 #include "mpu6050.h"
+#include "serialization.h"
 
 LOG_MODULE_REGISTER(ble);
 
@@ -234,6 +236,9 @@ static void pvrTaskBle(void *sub) {
 
         if (temp_notify_enable) {
           uint8_t data[sizeof(mpu_srv_data.temp)];
+          size_t index = 0;
+          ser_encoder_data(data, &index, &mpu_srv_data.temp,
+                           sizeof(mpu_srv_data.temp));
           memcpy(data, &mpu_srv_data.temp, sizeof(mpu_srv_data.temp));
           ret = prvNotifyData(&ess_service.attrs[2], data,
                               sizeof(mpu_srv_data.temp));
@@ -242,7 +247,9 @@ static void pvrTaskBle(void *sub) {
         }
         if (acce_notify_enable) {
           uint8_t data[sizeof(mpu_srv_data.acce)];
-          memcpy(data, &mpu_srv_data.acce, sizeof(mpu_srv_data.acce));
+          size_t index = 0;
+          ser_encoder_data(data, &index, mpu_srv_data.acce,
+                           sizeof(mpu_srv_data.acce));
           ret = prvNotifyData(&mpu_service.attrs[2], data,
                               sizeof(mpu_srv_data.acce));
         } else {
@@ -250,7 +257,9 @@ static void pvrTaskBle(void *sub) {
         }
         if (gyro_notify_enable) {
           uint8_t data[sizeof(mpu_srv_data.gyro)];
-          memcpy(data, &mpu_srv_data.gyro, sizeof(mpu_srv_data.gyro));
+          size_t index = 0;
+          ser_encoder_data(data, &index, mpu_srv_data.gyro,
+                           sizeof(mpu_srv_data.gyro));
           ret = prvNotifyData(&mpu_service.attrs[4], &mpu_srv_data.gyro,
                               sizeof(mpu_srv_data.gyro));
         } else {
