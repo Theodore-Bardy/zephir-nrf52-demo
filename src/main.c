@@ -13,6 +13,7 @@
 #include "demo_task1.h"
 #include "demo_task2.h"
 #include "sensor_task.h"
+#include "uart_task.h"
 
 LOG_MODULE_REGISTER(main);
 
@@ -69,12 +70,25 @@ int main(void) {
   }
 
   // Start tasks
-  task1_init();
-  task2_init();
-  task_sensor_init();
-  if (!task_ble_init()) {
-    LOG_ERR("BLE error on init");
+  if (!task1_init()) {
+    LOG_ERR("Failed to init task 1");
   }
+  if (!task2_init()) {
+    LOG_ERR("Failed to init task 2");
+  }
+  if (!task_sensor_init()) {
+    LOG_ERR("Failed to init sensor task");
+  }
+#ifdef CONFIG_BLE_SENSOR_DATA
+  if (!task_ble_init()) {
+    LOG_ERR("Failed to init BLE task");
+  }
+#endif
+#ifdef CONFIG_UART_SENSOR_DATA
+  if (!task_uart_init()) {
+    LOG_ERR("Failed to init UART task");
+  }
+#endif
 
   LOG_INF("--- Application is starting ---");
 

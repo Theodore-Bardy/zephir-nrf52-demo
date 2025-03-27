@@ -1,0 +1,49 @@
+mainmenu "Zephyr demo:"
+
+menuconfig SENSOR_DATA_OUTPUT
+  bool "Sensor data output"
+  default n
+  help
+    Enable/disable the demo sensor to outputs its data.
+
+config BLE_SENSOR_DATA
+  bool "Send sensor data over BLE"
+  default n
+  depends on SENSOR_DATA_OUTPUT
+
+if BLE_SENSOR_DATA
+  config BT
+    bool "Enable Bluetooth stack"
+    default y
+    help
+      Enable the Bluetooth stack for the project
+  
+  config BT_SETTINGS
+    bool "Enable Bluetooth settings storage"
+    default n
+    help
+      Store Bluetooth state and configuration persistently
+  
+  config BT_PERIPHERAL
+    bool
+    default y
+  
+  config BT_DEVICE_NAME
+    string "BLE device name"
+    default "Zephyr demo"
+  
+  config BT_DEVICE_NAME_DYNAMIC
+    bool
+    default y
+  
+  config BT_DEVICE_APPEARANCE_DYNAMIC
+    bool
+    default y
+endif
+
+config UART_SENSOR_DATA
+  bool "Send sensor data over UART"
+  default y
+  depends on SENSOR_DATA_OUTPUT
+
+source "Kconfig.zephyr"

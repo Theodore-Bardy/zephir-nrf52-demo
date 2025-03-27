@@ -23,8 +23,9 @@ ZBUS_CHAN_DECLARE(sensor_data);
 #define TASK_BLE_STACK_SIZE (1024)
 #define TASK_BLE_PRIORITITY (2)
 static void pvrTaskBle(void *sub);
-ZBUS_SUBSCRIBER_DEFINE(extern_com_sub, 1);
-K_THREAD_DEFINE(task_ble_id, TASK_BLE_STACK_SIZE, pvrTaskBle, &extern_com_sub,
+ZBUS_SUBSCRIBER_DEFINE(ble_com_sub, 1);
+ZBUS_CHAN_ADD_OBS(sensor_data, ble_com_sub, 1);
+K_THREAD_DEFINE(task_ble_id, TASK_BLE_STACK_SIZE, pvrTaskBle, &ble_com_sub,
                 NULL, NULL, TASK_BLE_PRIORITITY, K_ESSENTIAL, 0);
 
 typedef enum { BLE_IDLE, BLE_ADV, BLE_CONNECT, BLE_CONNECTED } BleTaskState;

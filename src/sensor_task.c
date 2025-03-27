@@ -9,12 +9,12 @@
 LOG_MODULE_REGISTER(task_sensor);
 
 // ZBus channels definition
-ZBUS_CHAN_DEFINE(sensor_data,                    // Name
-                 struct mpu6050_data,            // Message type
-                 NULL,                           // Validator
-                 NULL,                           // User data
-                 ZBUS_OBSERVERS(extern_com_sub), // Observers
-                 ZBUS_MSG_INIT(0)                // Initial value
+ZBUS_CHAN_DEFINE(sensor_data,          // Name
+                 struct mpu6050_data,  // Message type
+                 NULL,                 // Validator
+                 NULL,                 // User data
+                 ZBUS_OBSERVERS_EMPTY, // Observers
+                 ZBUS_MSG_INIT(0)      // Initial value
 );
 
 ZBUS_CHAN_DEFINE(trigger,                            // Name
@@ -88,13 +88,6 @@ static void prvTaskSensor(void *sub) {
       LOG_ERR("Unable to publish to the %s channel",
               zbus_chan_name(&sensor_data));
     }
-
-    LOG_INF("\n\r  temp  %lf Cel\n\r"
-            "  accel %lf %lf %lf m/s/s\n\r"
-            "  gyro  %lf %lf %lf rad/s",
-            data.temp, data.acce[X_INDEX], data.acce[Y_INDEX],
-            data.acce[Z_INDEX], data.gyro[X_INDEX], data.gyro[Y_INDEX],
-            data.gyro[Z_INDEX]);
 
     // Wait for 2 second before enable another acquisition
     k_sleep(K_SECONDS(2));
