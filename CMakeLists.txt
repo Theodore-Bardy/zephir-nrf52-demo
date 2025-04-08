@@ -9,10 +9,14 @@ set(BOARD nrf52dk/nrf52832)
 set(DTC_OVERLAY_FILE boards/nrf52832.overlay)
 
 # Pull Zephyr build system
-find_package(Zephyr REQUIRED)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 # Define project
 project(zephyr_nrf52_demo)
+
+# Verify the project is built through sysbuild to ensure MCUboot is
+# automatically included
+test_sysbuild()
 
 # Add sources
 file(

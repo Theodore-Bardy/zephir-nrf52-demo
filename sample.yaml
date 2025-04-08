@@ -1,2 +1,6 @@
 sample:
   name: Zephyr demo
+  description: Small Zephyr application that test Zephyr's features
+  platforms: nrf52832
+common:
+  sysbuild: true
