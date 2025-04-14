@@ -40,5 +40,13 @@ endif()
 
 target_sources(app PRIVATE src/main.c ${SOURCES_APP})
 
+# Build the llext
+set(ext_name user_app)
+file(GLOB ext_src ${CMAKE_CURRENT_LIST_DIR}/src/app/*.c)
+set(ext_bin ${PROJECT_BINARY_DIR}/llext/${ext_name}.llext)
+set(ext_inc ${ZEPHYR_BINARY_DIR}/include/generated/${ext_name}_ext.inc)
+add_llext_target(${ext_name}_ext OUTPUT ${ext_bin} SOURCES ${ext_src})
+generate_inc_file_for_target(app ${ext_bin} ${ext_inc})
+
 # Include headers
 target_include_directories(app PRIVATE src/mpu_driver)

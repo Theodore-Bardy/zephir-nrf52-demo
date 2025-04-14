@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
+#include <zephyr/llext/buf_loader.h>
+#include <zephyr/llext/llext.h>
 #include <zephyr/logging/log.h>
 
 #include "ble_task.h"
@@ -16,6 +18,10 @@
 #include "uart_task.h"
 
 LOG_MODULE_REGISTER(main);
+
+static uint8_t llext_buf[] = {
+#include "user_app_ext.inc"
+};
 
 bool prvInitBoard(void) {
   uint8_t ret;
@@ -90,11 +96,36 @@ int main(void) {
   }
 #endif
 
-  LOG_INF("--- Application is starting ---");
+  LOG_INF("--- OS is starting ---");
+  k_msleep(1000);
+
+  size_t llext_buf_len = ARRAY_SIZE(llext_buf);
+  struct llext_buf_loader buf_loader =
+      LLEXT_PERSISTENT_BUF_LOADER(llext_buf, llext_buf_len);
+  struct llext_loader *ldr = &buf_loader.loader;
+
+  struct llext_load_param ldr_parm = LLEXT_LOAD_PARAM_DEFAULT;
+  struct llext *ext;
+
+  if (0 != llext_load(ldr, "User app", &ext, &ldr_parm)) {
+    LOG_ERR("Failed to load extension");
+    return -1;
+  }
+
+  void (*user_app_fn)() = llext_find_sym(&ext->exp_tab, "UserAppEntryPoint");
+
+  if (user_app_fn == NULL) {
+    LOG_ERR("Failed to find symbol");
+    return -1;
+  }
+
+  LOG_INF("--- User application is starting ---");
+  user_app_fn();
 
   while (1) {
     k_sleep(K_FOREVER);
   }
 
+  llext_unload(&ext);
   return 0;
 }
